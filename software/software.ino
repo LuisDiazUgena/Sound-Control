@@ -23,6 +23,13 @@ int userDelay = 250;
 unsigned long nextTime;
 int intervale = 1000;
 
+// Number of mechanichal clicks of the encoder to increase or decrease
+//the volume of the computer.
+int mechClicks = 2;
+int pulsesPerClick = 4; // Electrical pulses per mechanichal pulse
+
+int rotation = (pulsesPerClick*mechClicks) - 1;
+
 void setup() {
   Serial.begin(9600);
   Serial.println("Basic Encoder Test:");
@@ -58,15 +65,18 @@ void loop() {
   //encoder rotation
   long newPosition = myEnc.read();
   if (newPosition != oldPosition) {
-    if (newPosition > (oldPosition + 4)) {
+    if (newPosition > (oldPosition + rotation)) {
       increaseVol();
+      Serial.print("diference = ");
+      Serial.println((newPosition-oldPosition));
       oldPosition = newPosition;
     }
-    if (newPosition < (oldPosition-4)) {
+    if (newPosition < (oldPosition-rotation)) {
       decreaseVol();
+      Serial.print("diference = ");
+      Serial.println((oldPosition - newPosition));
       oldPosition = newPosition;
     }
-    Serial.println(newPosition);
   }
 }
 void nextSong() {
